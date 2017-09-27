@@ -61,6 +61,10 @@ type DecoderConfig struct {
 	// it. If this is false, a map will be merged.
 	ZeroFields bool
 
+	// FieldRequired is true,then it is an error for there to not exist
+	// keys in the original map but the field is not marked as omitempty.
+	FieldRequired bool
+
 	// If WeaklyTypedInput is true, the decoder will make the following
 	// "weak" conversions:
 	//
@@ -755,10 +759,15 @@ func (d *Decoder) decodeStruct(name string, data interface{}, val reflect.Value)
 					break
 				}
 			}
-
 			if !rawMapVal.IsValid() {
 				// There was no matching key in the map for the value in
 				// the struct. Just ignore.
+				if d.config.FieldRequired {
+					tag := field.Tag.Get(d.config.TagName)
+					if !strings.Contains(tag, "omitempty") {
+						return fmt.Errorf(`Required field "%s" not found`, field.Name)
+					}
+				}
 				continue
 			}
 		}
@@ -787,14 +796,12 @@ func (d *Decoder) decodeStruct(name string, data interface{}, val reflect.Value)
 			errors = appendErrors(errors, err)
 		}
 	}
-
 	if d.config.ErrorUnused && len(dataValKeysUnused) > 0 {
 		keys := make([]string, 0, len(dataValKeysUnused))
 		for rawKey := range dataValKeysUnused {
 			keys = append(keys, rawKey.(string))
 		}
 		sort.Strings(keys)
-
 		err := fmt.Errorf("'%s' has invalid keys: %s", name, strings.Join(keys, ", "))
 		errors = appendErrors(errors, err)
 	}
