@@ -286,9 +286,9 @@ func (d *Decoder) decodeString(name string, data interface{}, val reflect.Value)
 		val.SetString(dataVal.String())
 	case dataKind == reflect.Bool && d.config.WeaklyTypedInput:
 		if dataVal.Bool() {
-			val.SetString("1")
+			val.SetString("true")
 		} else {
-			val.SetString("0")
+			val.SetString("false")
 		}
 	case dataKind == reflect.Int && d.config.WeaklyTypedInput:
 		val.SetString(strconv.FormatInt(dataVal.Int(), 10))
@@ -340,6 +340,8 @@ func (d *Decoder) decodeInt(name string, data interface{}, val reflect.Value) er
 		i, err := strconv.ParseInt(dataVal.String(), 0, val.Type().Bits())
 		if err == nil {
 			val.SetInt(i)
+		} else if dataVal.String() == "" {
+			val.SetInt(0)
 		} else {
 			return fmt.Errorf("cannot parse '%s' as int: %s", name, err)
 		}
@@ -391,9 +393,12 @@ func (d *Decoder) decodeUint(name string, data interface{}, val reflect.Value) e
 		i, err := strconv.ParseUint(dataVal.String(), 0, val.Type().Bits())
 		if err == nil {
 			val.SetUint(i)
+		} else if dataVal.String() == "" {
+			val.SetUint(0)
 		} else {
 			return fmt.Errorf("cannot parse '%s' as uint: %s", name, err)
 		}
+
 	default:
 		return fmt.Errorf(
 			"'%s' expected type '%s', got unconvertible type '%s'",
@@ -456,6 +461,8 @@ func (d *Decoder) decodeFloat(name string, data interface{}, val reflect.Value) 
 		f, err := strconv.ParseFloat(dataVal.String(), val.Type().Bits())
 		if err == nil {
 			val.SetFloat(f)
+		} else if dataVal.String() == "" {
+			val.SetFloat(0)
 		} else {
 			return fmt.Errorf("cannot parse '%s' as float: %s", name, err)
 		}

@@ -618,7 +618,7 @@ func TestDecode_TypeConversion(t *testing.T) {
 		BoolToInt:          1,
 		BoolToUint:         1,
 		BoolToFloat:        1,
-		BoolToString:       "1",
+		BoolToString:       "true",
 		FloatToInt:         42,
 		FloatToUint:        42,
 		FloatToBool:        true,
