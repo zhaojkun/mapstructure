@@ -771,7 +771,8 @@ func (d *Decoder) decodeStruct(name string, data interface{}, val reflect.Value)
 				// the struct. Just ignore.
 				if d.config.FieldRequired {
 					tag := field.Tag.Get(d.config.TagName)
-					if strings.Contains(tag, "required") {
+					parts := strings.Split(tag, ",")
+					if len(parts) >= 2 && parts[1] == "required" {
 						return fmt.Errorf(`Required field "%s" not found`, field.Name)
 					}
 				}
