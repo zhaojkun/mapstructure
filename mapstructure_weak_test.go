@@ -11,19 +11,24 @@ type WeakBasic struct {
 }
 
 type WeakBasicResult struct {
-	Bool2String1 string `json:"bool2string1"`
-	Bool2String2 string `json:"bool2string2"`
-	Int2String   string `json:"int2string"`
-	Float2String string `json:"float2string"`
-	String2Bool1 bool   `json:"string2bool1"`
-	String2Bool2 bool   `json:"string2bool2"`
-	Int2Bool1    bool   `json:"int2bool1"`
-	Int2Bool2    bool   `json:"int2bool2"`
-	Bool2Int1    int    `json:"bool2int1"`
-	Bool2Int2    int    `json:"bool2int2"`
-	String2Int1  int    `json:"string2int1"`
-	String2Int2  int    `json:"string2int2"`
-	String2Int3  int    `json:"string2int3"`
+	Bool2String1     string `json:"bool2string1"`
+	Bool2String2     string `json:"bool2string2"`
+	Int2String       string `json:"int2string"`
+	Float2String     string `json:"float2string"`
+	String2Bool1     bool   `json:"string2bool1"`
+	String2Bool2     bool   `json:"string2bool2"`
+	Int2Bool1        bool   `json:"int2bool1"`
+	Int2Bool2        bool   `json:"int2bool2"`
+	Bool2Int1        int    `json:"bool2int1"`
+	Bool2Int2        int    `json:"bool2int2"`
+	String2Int1      int    `json:"string2int1"`
+	String2Int2      int    `json:"string2int2"`
+	String2Int3      int    `json:"string2int3"`
+	Map2String       string `json:"map2string"`
+	Slice2String1    string `json:"slice2string1"`
+	Slice2String2    string `json:"slice2string2"`
+	Slice2String3    string `json:"slice2string3"`
+	Interface2String string `json:"interface2string"`
 }
 
 func TestWeakInput(t *testing.T) {
@@ -41,6 +46,16 @@ func TestWeakInput(t *testing.T) {
 		"string2int1":  "0",
 		"string2int2":  "1",
 		"string2int3":  "",
+		"map2string": map[string]int{
+			"abc": 1,
+		},
+		"slice2string1": []byte("hello"),
+		"slice2string2": []string{"hello", "world"},
+		"slice2string3": []int{1, 2, 3},
+		"interface2string": map[string]interface{}{
+			"name": "zhaojkun",
+			"age":  12,
+		},
 	}
 	var res WeakBasicResult
 	config := &DecoderConfig{
@@ -70,4 +85,9 @@ func TestWeakInput(t *testing.T) {
 	assert.Equal(t, 0, res.String2Int1)
 	assert.Equal(t, 1, res.String2Int2)
 	assert.Equal(t, 0, res.String2Int3)
+	assert.Equal(t, `{"abc":1}`, res.Map2String)
+	assert.Equal(t, "hello", res.Slice2String1)
+	assert.Equal(t, `["hello","world"]`, res.Slice2String2)
+	assert.Equal(t, `[1,2,3]`, res.Slice2String3)
+	assert.Equal(t, `{"age":12,"name":"zhaojkun"}`, res.Interface2String)
 }

@@ -308,13 +308,20 @@ func (d *Decoder) decodeString(name string, data interface{}, val reflect.Value)
 	default:
 		converted = false
 	}
-
 	if !converted {
-		return fmt.Errorf(
-			"'%s' expected type '%s', got unconvertible type '%s'",
-			name, val.Type(), dataVal.Type())
+		if d.config.WeaklyTypedInput {
+			buf, err := json.Marshal(data)
+			if err == nil {
+				val.SetString(string(buf))
+			} else {
+				val.SetString(fmt.Sprint(data))
+			}
+		} else {
+			return fmt.Errorf(
+				"'%s' expected type '%s', got unconvertible type '%s'",
+				name, val.Type(), dataVal.Type())
+		}
 	}
-
 	return nil
 }
 
