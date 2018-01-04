@@ -642,7 +642,7 @@ func TestDecode_TypeConversion(t *testing.T) {
 		t.Errorf("should return an error")
 	}
 	if !reflect.DeepEqual(resultStrict, expectedResultStrict) {
-		t.Errorf("expected %v, got: %v", expectedResultStrict, resultStrict)
+		t.Errorf("expected %v\n, got: %v", expectedResultStrict, resultStrict)
 	}
 
 	// Test weak type conversion
